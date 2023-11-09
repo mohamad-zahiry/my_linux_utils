@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+# ======================================================================
+# pacman apps list
+# ======================================================================
+
+apps=(
+    # Most used packages
+    vim wget curl git ufw xdg-desktop-portal-gnome htop tmux
+    alacritty
+
+    # Some useful utilities
+    tlp bat mtr nethogs tree ranger gparted links neofetch smplayer
+    firefox libreoffice-fresh
+
+    # most used fonts
+    ttf-roboto ttf-roboto-mono
+)
+# ======================================================================
+
+# ======================================================================
+# AUR apps list
+# ======================================================================
+
+aur_apps=(
+    visual-studio-code-bin trickle jcal vazirmatn-fonts
+    vazir-code-fonts
+)
+# ======================================================================
+
+# ======================================================================
+# Defined functions
+# ======================================================================
+
+function echot {
+    echo -e "    $@"
+}
+
+function now {
+    date "+[%F %T]"
+}
+
+function log {
+    echo "$(now) $@"
+}
+
+# Install paru
+function install-paru {
+    log Start install paru
+
+    log Install paru dependencies
+    sudo pacman -S --needed base-devel
+
+    log Clone paru github repo
+    git clone https://aur.archlinux.org/paru.git
+    cd paru
+
+    log install paru
+    makepkg -si
+
+    log Remove paru clones files
+    cd ../
+    rm -rf paru
+}
+
+# Install fish, omf and setup
+function install-fish {
+    log Install fish
+    sudo pacman -S fish
+
+    log Change login shell for \"$USER\"
+    chsh -s /bin/fish $USER
+
+    log Install oh-my-fish
+    curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+
+    log Install robbyrussell theme
+    omf install robbyrussell
+}
+
+# Install docker, additional packages and setup
+function install-docker {
+    log Install docker, docker-compose
+    sudo pacman -S docker docker-compose
+
+    log Enable docker.socket instead of docker.service
+    echot "For more info see \"https://wiki.archlinux.org/title/docker\""
+    sudo systemctl enable docker.socket
+}
+
+# Install python, additional packages and setup
+function install-python {
+    log Install python
+    sudo pacman -S python
+
+    log Install additional python packages
+    sudo pacman -S python-pipx python-pip python-poetry python-virtualenv bpython
+}
+
+# Install ly, setup theme, enable that
+function install-ly {
+    # My custom ly config
+    ly_config="animate = true\nanimation = 1\nclock = %c\nbigclock = true\nblank_password = true\nblank_box = false\nhide_f1_commands = true\nshutdown_cmd = ly-dm\nrestart_cmd = ly-dm\n"
+
+    log Install ly display manager
+    pacman -S ly
+
+    log Find current display manger
+    current_display_manager=$(file /etc/systemd/system/display-manager.service | cut -b 63-)
+    current_display_manager=$(basename $current_display_manager)
+    log Current display manager is \"$current_display_manager\"
+
+    log Disable \"$current_display_manager\"
+    systemctl disable $current_display_manager
+
+    log Enable ly.service
+    systemctl enable ly.service
+
+    log disable getty on Ly's tty to enable switch between ttys after Ly's start
+    echot "For more info see \"https://github.com/fairyglade/ly#cloning-and-compiling\""
+    systemctl disable getty@tty2.service
+
+    log Copy ly default config file \"/etc/ly/config.ini\" to \"/etc/ly/config.ini.backup\"
+    cp /etc/ly/config.ini /etc/ly/config.ini.backup
+
+    log Customize ly config
+    echo -e $ly_config >/etc/ly/config.ini
+}
+
+# Setup pacman
+function setup-pacman {
+    log Customize \"pacman.conf\"
+
+    log Make a copy of \"/etc/pacman.conf\" to \"/etc/pacman.conf.backup\"
+    cp /etc/pacman.conf /etc/pacman.conf.backup
+
+    log Enable color mode
+    sudo sed -i "s/#Color/Color/" /etc/pacman.conf
+
+    log Enable \"[extra-testing]\" repo
+    sudo sed -i "/#\[extra-testing]/{s/#//;}" /etc/pacman.conf
+    sudo sed -i "/\[extra-testing]/{n;s/#//;}" /etc/pacman.conf
+
+    log Enable color mode
+    sudo sed -i "/#\[extra-testing]/{s/#//;}" /etc/pacman.conf
+
+    log Enable 3 parallel downloads
+    sudo sed -i "s/^#ParallelDownloads.*$/ParallelDownloads = 3/" /etc/pacman.conf
+}
+# ======================================================================
+
+# ======================================================================
+# Install packages
+# ======================================================================
+
+setup-pacman
+sudo pacman -Sy ${apps[@]}
+install-python
+install-fish
+install-docker
+sudo install-ly
+install-paru
+paru -S ${aur_apps[@]}
