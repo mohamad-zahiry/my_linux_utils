@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+
+# ======================================================================
+# Files which gonna make a copy of theme
+
+dot_config="$HOME/.config"
+dot_config_dirs=(
+    alacritty
+    fish
+    fontconfig
+    htop
+)
+
+dot_local_share="$HOME/.local/share"
+dot_local_share_dirs=(
+    applications
+    fonts
+)
+
+dot_local_bin="$HOME/.local/bin"
+dot_local_bin_dirs=(
+    dns
+    backup
+    ut
+    setup
+)
+
+dot_ssh="$HOME/.ssh"
+dot_gnupg="$HOME/.gnupg"
+dot_vim="$HOME/.vim"
+dot_vimrc="$HOME/.vimrc"
+
+# ======================================================================
+# Backup directory file system
+
+backup_dir="$HOME/$USER.backup.d"
+
+backup_dot_config="$backup_dir/.config"
+backup_dot_local_bin="$backup_dir/.local/bin"
+backup_dot_local_share="$backup_dir/.local/share"
+backup_dot_ssh="$backup_dir/.ssh"
+backup_dot_gnupg="$backup_dir/.gnupg"
+backup_dot_vim="$backup_dir/.vim"
+backup_dot_vimrc="$backup_dir/.vimrc"
+
+# ======================================================================
+# Fancy echo functions
+
+function echon {
+    echo -e "\n$1"
+}
+
+function echop {
+    echo "    $1  ->  $2"
+}
+
+# ======================================================================
+# Prepare $backup_dir
+
+# Check if $backup_dir is exist
+if (test -d $backup_dir); then
+    echo "There is a directory \"$backup_dir\""
+
+    read -p "Do you wanna remove that? [yes/N] " answer
+
+    if (test "yes" = "$answer"); then
+        rm -rf $backup_dir
+    else
+        echon "Rename or Remove \"$backup_dir\" before run this command again"
+        exit
+    fi
+fi
+
+# Create $backup_dir
+mkdir $backup_dir
+
+# Check if $backup_dir is created sucessfully
+if (test $? = 0); then
+    echon "Backup directory \"$backup_dir\" is created"
+else
+    echo "There is problem with creating \"$backup_dir\""
+    exit 1
+fi
+
+# ======================================================================
+# Copy files
+
+# Copy /home/$USER/.config
+from=$dot_config
+to=$backup_dot_config
+from_dirs=${dot_config_dirs[@]}
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+for d in ${from_dirs[@]}; do
+    echop "$from/$d" "$to/$d"
+    cp -r "$from/$d" "$to/$d"
+done
+
+# Copy /home/$USER/.local/bin
+from=$dot_local_bin
+to=$backup_dot_local_bin
+from_dirs=${dot_local_bin_dirs[@]}
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+for d in ${from_dirs[@]}; do
+    echop "$from/$d" "$to/$d"
+    cp -r "$from/$d" "$to/$d"
+done
+
+# Copy /home/$USER/.local/share
+from=$dot_local_share
+to=$backup_dot_local_share
+from_dirs=${dot_local_share_dirs[@]}
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+for d in ${from_dirs[@]}; do
+    echop "$from/$d" "$to/$d"
+    cp -r "$from/$d" "$to/$d"
+done
+
+# Copy /home/$USER/.ssh
+from=$dot_ssh
+to=$backup_dot_ssh
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+echop "$from" "$to"
+cp -r "$from" "$to"
+
+# Copy /home/$USER/.gnupg
+from=$dot_gnupg
+to=$backup_dot_gnupg
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+echop "$from" "$to"
+cp -r "$from" "$to"
+
+# Copy /home/$USER/.vim
+from=$dot_vim
+to=$backup_dot_vim
+
+echon "Start copying files in \"$from\""
+
+mkdir -p $to
+
+echop "$from" "$to"
+cp -r "$from" "$to"
+
+# Copy /home/$USER/.vimrc
+from=$dot_vimrc
+to=$backup_dot_vimrc
+
+echon "Start copying \"$from\""
+
+echop "$from" "$to"
+cp -r "$from" "$to"
