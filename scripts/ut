@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+ut=$(uptime -p)
+echo "uptime  ${ut:3}"
