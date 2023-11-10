@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+function help-message {
+    cat <<EOF
+dns: show or update system dns
+
+    dns             show  current dns
+    dns <DNS>       update dns. DNS: shecan, 403
+    dns --help      show this help message
+EOF
+}
+
+case $1 in
+shecan)
+    sudo bash -c "echo \"# $1\" > /etc/resolv.conf"
+    sudo bash -c "echo -e \"nameserver 178.22.122.100\nnameserver 185.51.200.2\" >> /etc/resolv.conf"
+    ;;
+403)
+    sudo bash -c "echo \"# $1\" > /etc/resolv.conf"
+    sudo bash -c "echo -e \"nameserver 10.202.10.202\nnameserver 10.202.10.102\" >> /etc/resolv.conf"
+    ;;
+"")
+    cat /etc/resolv.conf
+    ;;
+"--help")
+    help-message
+    ;;
+*)
+    help-message
+    exit 1
+    ;;
+esac
