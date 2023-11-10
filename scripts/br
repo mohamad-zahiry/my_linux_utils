@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function help-message {
+    cat <<EOF
+br: show or update backlight brightness
+
+    br              show current brightness
+    br <int>        update brightness
+    br --help       show this help message
+EOF
+}
+
+case $1 in
+*[[:digit:]])
+    sudo bash -c "echo $1 > /sys/class/backlight/intel_backlight/brightness"
+    ;;
+"")
+    echo "brightness  $(cat /sys/class/backlight/intel_backlight/brightness)"
+    ;;
+"--help")
+    help-message
+    ;;
+*)
+    help-message
+    exit 1
+    ;;
+esac
