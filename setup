@@ -94,7 +94,7 @@ function install-python {
     sudo pacman -S python
 
     log Install additional python packages
-    sudo pacman -S python-pipx python-pip python-poetry python-virtualenv bpython
+    sudo pacman -S python-pipx python-pip python-poetry python-virtualenv ipython
 }
 
 # Install ly, setup theme, enable that
