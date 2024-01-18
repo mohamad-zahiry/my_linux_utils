@@ -97,19 +97,19 @@ case $1 in
     cat /etc/resolve.conf
     ;;
 
-"-s" | "--set" | "set")
+"-s" | "--set")
     set-dns $2
     ;;
 
-"-i" | "--init" | "init")
+"-i" | "--init")
     init
     ;;
 
-"-l" | "--list" | "list")
+"-l" | "--list")
     list-dns
     ;;
 
-"-h" | "--help" | "help")
+"-h" | "--help")
     show-help
     ;;
 
