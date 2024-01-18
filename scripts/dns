@@ -4,22 +4,25 @@ CONFIG_PATH=$HOME/.config/dns/dns.list.d
 
 HELP_MSG=$(
     cat <<EOF
-dns: show/update system dns
+Show/Set system DNS
 
-    use: dns <options> <dns>
+Usage:
+  dns [OPTION] [DNS]
 
-    dns                     show current dns
-    dns -i, --init          initialize the dns command config
-    dns -s, --set <DNS>     update dns. list DNSes with -l
-    dns -l, --list          list all available DNSes
-    dns -h, --help          show this help message
+Options:
+  <no arg>                  show current DNS
+  -i, --init                initialize the dns command config
+  -s, --set <DNS>           setup given <DNS>
+  -l, --list                list all DNS-configs
+  -h, --help                show this help message
 
-    example:
-        dns -s shecan       # set up "shecan" dns
+Example:
+  dns -s shecan             # setup "shecan" DNS
+  dns                       # print current DNS-config
 EOF
 )
 
-ERROR_MSG="! Bad usage"
+ERROR_MSG="Bad usage"
 
 ################################################################################
 # default dns configs
