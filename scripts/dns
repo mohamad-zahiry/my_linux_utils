@@ -48,13 +48,11 @@ EOF
 ################################################################################
 
 function show-help {
-    echo "$HELP_MSG"
-    echo
+    echo -e "$HELP_MSG\n"
 }
 
 function show-error {
-    echo "$ERROR_MSG"
-    echo
+    echo -e "$ERROR_MSG\n"
 }
 
 function init {
@@ -64,8 +62,8 @@ function init {
 
     mkdir -p $CONFIG_PATH
 
-    echo "$dns_shecan" >$HOME/.config/dns/dns.list.d/shecan
-    echo "$dns_403" >$HOME/.config/dns/dns.list.d/403
+    echo "$dns_shecan" >$CONFIG_PATH/shecan
+    echo "$dns_403" >$CONFIG_PATH/403
 }
 
 function list-dns {
